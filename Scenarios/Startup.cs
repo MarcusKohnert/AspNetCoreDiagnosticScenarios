@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,11 @@ namespace Scenarios
 {
     public class Startup
     {
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();

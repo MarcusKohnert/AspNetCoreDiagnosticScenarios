@@ -166,5 +166,45 @@ namespace Scenarios.Controllers
 
             return Accepted();
         }
+
+        [HttpGet("/fire-and-forget-6")]
+        public IActionResult FireAndForget6([FromServices]IServiceScopeFactory serviceScopeFactory)
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+
+                try
+                {
+                    using (var scope = serviceScopeFactory.CreateScope())
+                    {
+                        var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+                        var logger = loggerFactory.CreateLogger("Background Task");
+
+                        // This uses the traceIdenifier captured at the time the request started.
+                        using (logger.BeginScope("Background operation kicked off"))
+                        {
+                            try
+                            {
+
+                                logger.LogDebug("Hello from background task.");
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex, "Background task failed.");
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            });
+
+            return Accepted();
+        }
     }
 }
